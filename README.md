@@ -12,10 +12,16 @@ You can build the readme with this command:
 
 # [![TypeScript Node](logo.svg?sanitize=true)](https://typestrong.org/ts-node)
 
-[![NPM version](https://img.shields.io/npm/v/ts-node.svg?style=flat)](https://npmjs.org/package/ts-node)
-[![NPM downloads](https://img.shields.io/npm/dm/ts-node.svg?style=flat)](https://npmjs.org/package/ts-node)
-[![Build status](https://img.shields.io/github/actions/workflow/status/TypeStrong/ts-node/continuous-integration.yml?branch=main)](https://github.com/TypeStrong/ts-node/actions?query=workflow%3A%22Continuous+Integration%22)
-[![Test coverage](https://codecov.io/gh/TypeStrong/ts-node/branch/main/graph/badge.svg)](https://codecov.io/gh/TypeStrong/ts-node)
+[![NPM version](https://img.shields.io/npm/v/ts-node-lite.svg?style=flat)](https://npmjs.org/package/ts-node-lite)
+[![NPM downloads](https://img.shields.io/npm/dm/ts-node-lite.svg?style=flat)](https://npmjs.org/package/ts-node-lite)
+[![Build status](https://img.shields.io/github/actions/workflow/status/christophehurpeau/ts-node-lite/continuous-integration.yml?branch=main)](https://github.com/christophehurpeau/ts-node-lite/actions?query=workflow%3A%22Continuous+Integration%22)
+[![Test coverage](https://codecov.io/gh/christophehurpeau/ts-node-lite/branch/main/graph/badge.svg)](https://codecov.io/gh/christophehurpeau/ts-node-lite)
+
+# Fork
+
+Fork of [ts-node](https://github.com/TypeStrong/ts-node) that only keeps bare minimum.
+
+# ts-node README
 
 > TypeScript execution and REPL for node.js, with source map and native ESM support.
 
@@ -213,7 +219,7 @@ To write scripts with maximum portability, [specify options in your `tsconfig.js
 console.log("Hello, world!")
 ```
 
-Including options within the shebang requires the [`env -S` flag](https://manpages.debian.org/bullseye/coreutils/env.1.en.html#S), which is available on recent versions of `env`. ([compatibility](https://github.com/TypeStrong/ts-node/pull/1448#issuecomment-913895766))
+Including options within the shebang requires the [`env -S` flag](https://manpages.debian.org/bullseye/coreutils/env.1.en.html#S), which is available on recent versions of `env`. ([compatibility](https://github.com/christophehurpeau/ts-node-lite/pull/1448#issuecomment-913895766))
 
 ```typescript twoslash
 #!/usr/bin/env -S ts-node --files
@@ -734,7 +740,7 @@ In the future, this hook will also support:
 *   `rootDirs`
 *   `outDir` to `rootDir` mappings for composite projects and monorepos
 
-For details, see [#1514](https://github.com/TypeStrong/ts-node/issues/1514).
+For details, see [#1514](https://github.com/christophehurpeau/ts-node-lite/issues/1514).
 
 *Default:* `false`, but will likely be enabled by default in a future version<br/>
 *Can only be specified via `tsconfig.json` or API.*
@@ -829,7 +835,7 @@ If you must keep `"module": "ESNext"` for `tsc`, webpack, or another build tool,
 
 [Node's ESM loader hooks](https://nodejs.org/api/esm.html#esm_experimental_loaders) are [**experimental**](https://nodejs.org/api/documentation.html#documentation_stability_index) and subject to change. ts-node's ESM support is as stable as possible, but it relies on APIs which node can *and will* break in new versions of node.  Thus it is not recommended for production.
 
-For complete usage, limitations, and to provide feedback, see [#1007](https://github.com/TypeStrong/ts-node/issues/1007).
+For complete usage, limitations, and to provide feedback, see [#1007](https://github.com/christophehurpeau/ts-node-lite/issues/1007).
 
 You must set [`"type": "module"`](https://nodejs.org/api/packages.html#packages_type) in `package.json` and [`"module": "ESNext"`](https://www.typescriptlang.org/tsconfig/#module) in `tsconfig.json`.
 
@@ -976,7 +982,7 @@ This error is thrown by node when a module has an unrecognized file extension, o
 
 *   You are using a tool which has an extensionless binary, such as `mocha`.
     *   CommonJS supports extensionless files but native ESM does not.
-    *   Solution: upgrade to ts-node >=[v10.6.0](https://github.com/TypeStrong/ts-node/releases/tag/v10.6.0), which implements a workaround.
+    *   Solution: upgrade to ts-node >=[v10.6.0](https://github.com/christophehurpeau/ts-node-lite/releases/tag/v10.6.0), which implements a workaround.
 *   Our ESM loader is not installed.
     *   Solution: Use `ts-node-esm`, `ts-node --esm`, or add `"ts-node": {"esm": true}` to your tsconfig.json.  [Docs](#native-ecmascript-modules)
 *   You have moved your project to ESM but still have a config file, such as `webpack.config.ts`, which must be executed as CommonJS <!-- SYNC_WITH_MTO_DOCS -->
@@ -1218,7 +1224,7 @@ export a `create` function described by our
 invoked by ts-node at startup to create one or more transpiler instances.  The instances are used to transform
 TypeScript into JavaScript.
 
-For a working example, check out out our bundled swc plugin: https://github.com/TypeStrong/ts-node/blob/main/src/transpilers/swc.ts
+For a working example, check out out our bundled swc plugin: https://github.com/christophehurpeau/ts-node-lite/blob/main/src/transpilers/swc.ts
 
 ## Module type overrides
 
@@ -1435,7 +1441,7 @@ This tells any node processes which receive this environment variable to install
 
 # License
 
-ts-node is licensed under the MIT license.  [MIT](https://github.com/TypeStrong/ts-node/blob/main/LICENSE)
+ts-node is licensed under the MIT license.  [MIT](https://github.com/christophehurpeau/ts-node-lite/blob/main/LICENSE)
 
 ts-node includes source code from Node.js which is licensed under the MIT license.  [Node.js license information](https://raw.githubusercontent.com/nodejs/node/master/LICENSE)
 

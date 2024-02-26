@@ -84,7 +84,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/TypeStrong/ts-node.git"
+    "url": "git://github.com/christophehurpeau/ts-node-lite.git"
   },
   "keywords": [
     "typescript",
@@ -108,9 +108,8 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/TypeStrong/ts-node/issues"
+    "url": "https://github.com/christophehurpeau/ts-node-lite/issues"
   },
-  "homepage": "https://typestrong.org/ts-node",
   "devDependencies": {
     "@TypeStrong/fs-fixture-builder": "https://github.com/Typestrong/fs-fixture-builder.git#3099e53621daf99db971af29c96145dc115693cd",
     "@cspotcode/ava-lib": "https://github.com/cspotcode/ava-lib#805aab17b2b89c388596b6dc2b4eece403c5fb87",
