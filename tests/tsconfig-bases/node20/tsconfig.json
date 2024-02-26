@@ -1,3 +1,0 @@
-{
-  "extends": "ts-node/node20/tsconfig.json"
-}

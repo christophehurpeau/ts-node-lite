@@ -42,9 +42,4 @@ test('should export all CJS entrypoints', () => {
   testsDirRequire.resolve('ts-node/esm.mjs');
   testsDirRequire.resolve('ts-node/esm/transpile-only');
   testsDirRequire.resolve('ts-node/esm/transpile-only.mjs');
-
-  testsDirRequire.resolve('ts-node/node14/tsconfig.json');
-  testsDirRequire.resolve('ts-node/node16/tsconfig.json');
-  testsDirRequire.resolve('ts-node/node18/tsconfig.json');
-  testsDirRequire.resolve('ts-node/node20/tsconfig.json');
 });

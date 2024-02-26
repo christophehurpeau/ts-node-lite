@@ -282,8 +282,8 @@ You can use this sample configuration as a starting point:
 
 ```jsonc title="tsconfig.json"
 {
-  // This is an alias to @tsconfig/node16: https://github.com/tsconfig/bases
-  "extends": "ts-node/node16/tsconfig.json",
+  // requires `@tsconfig/node16` as dev dependency: https://github.com/tsconfig/bases
+  "extends": "@tsconfig/node16/tsconfig.json",
 
   // Most ts-node options can be specified here using their programmatic names.
   "ts-node": {
@@ -310,13 +310,10 @@ Our bundled [JSON schema](https://unpkg.com/browse/ts-node@latest/tsconfig.schem
 ### @tsconfig/bases
 
 [@tsconfig/bases](https://github.com/tsconfig/bases) maintains recommended configurations for several node versions.
-As a convenience, these are bundled with ts-node.
 
 ```jsonc title="tsconfig.json"
 {
-  "extends": "ts-node/node16/tsconfig.json",
-
-  // Or install directly with `npm i -D @tsconfig/node16`
+  // Install directly with `npm i -D @tsconfig/node16`
   "extends": "@tsconfig/node16/tsconfig.json",
 }
 ```
@@ -324,7 +321,7 @@ As a convenience, these are bundled with ts-node.
 ### Default config
 
 If no `tsconfig.json` is loaded from disk, ts-node will use the newest recommended defaults from
-[@tsconfig/bases](https://github.com/tsconfig/bases/) compatible with your `node` and `typescript` versions.
+[@tsconfig/bases](https://github.com/tsconfig/bases/) compatible with your `node` and `typescript` versions. However it is not included in ts-node-lite so it will need to be available (installed locally or globally).
 With the latest `node` and `typescript`, this is [`@tsconfig/node16`](https://github.com/tsconfig/bases/blob/master/bases/node16.json).
 
 Older versions of `typescript` are incompatible with `@tsconfig/node16`.  In those cases we will use an older default configuration.

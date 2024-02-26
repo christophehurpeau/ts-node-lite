@@ -255,13 +255,19 @@ export function readConfig(
   const files = rawApiOptions.files ?? tsNodeOptionsFromTsconfig.files ?? DEFAULTS.files;
 
   // Only if a config file is *not* loaded, load an implicit configuration from @tsconfig/bases
-  const skipDefaultCompilerOptions = rootConfigPath != null;
-  const defaultCompilerOptionsForNodeVersion = skipDefaultCompilerOptions
-    ? undefined
-    : {
+  const addDefaultCompilerOptions = rootConfigPath == null;
+  const defaultCompilerOptionsForNodeVersion = addDefaultCompilerOptions
+    ? {
         ...getDefaultTsconfigJsonForNodeVersion(ts).compilerOptions,
         types: ['node'],
-      };
+      }
+    : undefined;
+
+  if (addDefaultCompilerOptions && process.env.NODE_ENV !== 'test') {
+    console.warn(
+      'ts-node: Using default tsconfig.json for node version. This will be removed in a future release. Please specify a tsconfig.json file.'
+    );
+  }
 
   // Merge compilerOptions from all sources
   config.compilerOptions = Object.assign(

@@ -16,12 +16,12 @@
       "name": "Debug resolver test",
       "type": "pwa-node",
       "request": "launch",
-      "cwd": "${workspaceFolder}/tests/tmp/resolver-0029-preferSrc-typeModule-allowJs-skipIgnore-experimentalSpecifierResolutionNode",
+      "cwd": "${workspaceFolder}/tests/tmp/resolver-0007-preferOut-typeCjs----allowJs-useTsNodenext-skipIgnore-experimentalSpecifierResolutionNode",
       "runtimeArgs": [
         "--loader",
         "../../../esm.mjs"
       ],
-      "program": "./src/entrypoint-0000-src-to-src.cjs"
+      "program": "./src/entrypoint-0024-src-to-src.cjs"
     },
     {
       "name": "Debug Example: running a test fixture against local ts-node/esm loader",
