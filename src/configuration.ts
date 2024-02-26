@@ -244,14 +244,8 @@ export function readConfig(
     if (options.moduleTypes) {
       optionBasePaths.moduleTypes = basePath;
     }
-    if (options.transpiler != null) {
-      optionBasePaths.transpiler = basePath;
-    }
     if (options.compiler != null) {
       optionBasePaths.compiler = basePath;
-    }
-    if (options.swc != null) {
-      optionBasePaths.swc = basePath;
     }
 
     assign(tsNodeOptionsFromTsconfig, options);
@@ -358,12 +352,10 @@ function filterRecognizedTsConfigTsNodeOptions(jsonObject: any): {
     skipIgnore,
     transpileOnly,
     typeCheck,
-    transpiler,
     scope,
     scopeDir,
     moduleTypes,
     experimentalReplAwait,
-    swc,
     experimentalResolver,
     esm,
     experimentalSpecifierResolution,
@@ -386,11 +378,9 @@ function filterRecognizedTsConfigTsNodeOptions(jsonObject: any): {
     skipIgnore,
     transpileOnly,
     typeCheck,
-    transpiler,
     scope,
     scopeDir,
     moduleTypes,
-    swc,
     experimentalResolver,
     esm,
     experimentalSpecifierResolution,

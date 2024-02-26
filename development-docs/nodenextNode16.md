@@ -30,7 +30,7 @@ Matrix:
 - from cjs and esm
 - .cts, .cjs
 - .mts, .mjs
-- typechecking, transpileOnly, and swc
+- typechecking, transpileOnly
 - dynamic import
 - import = require
 - static import

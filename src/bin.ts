@@ -124,8 +124,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
         '--ignoreDiagnostics': [String],
         '--ignore': [String],
         '--transpileOnly': Boolean,
-        '--transpiler': String,
-        '--swc': Boolean,
         '--typeCheck': Boolean,
         '--compilerHost': Boolean,
         '--pretty': Boolean,
@@ -202,8 +200,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     '--ignore': ignore,
     '--transpileOnly': transpileOnly,
     '--typeCheck': typeCheck,
-    '--transpiler': transpiler,
-    '--swc': swc,
     '--compilerHost': compilerHost,
     '--pretty': pretty,
     '--skipProject': skipProject,
@@ -241,8 +237,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     ignore,
     transpileOnly,
     typeCheck,
-    transpiler,
-    swc,
     compilerHost,
     pretty,
     skipProject,
@@ -273,18 +267,16 @@ Options:
   -i, --interactive               Opens the REPL even if stdin does not appear to be a terminal
 
   --esm                           Bootstrap with the ESM loader, enabling full ESM support
-  --swc                           Use the faster swc transpiler
 
   -h, --help                      Print CLI usage
   -v, --version                   Print module version information.  -vvv to print additional information
   --showConfig                    Print resolved configuration and exit
 
-  -T, --transpileOnly             Use TypeScript's faster \`transpileModule\` or a third-party transpiler
+  -T, --transpileOnly             Use TypeScript's faster \`transpileModule\`
   -H, --compilerHost              Use TypeScript's compiler host API
   -I, --ignore [pattern]          Override the path patterns to skip compilation
   -P, --project [path]            Path to TypeScript JSON project file
   -C, --compiler [name]           Specify a custom TypeScript compiler
-  --transpiler [name]             Specify a third-party, non-typechecking transpiler
   -D, --ignoreDiagnostics [code]  Ignore TypeScript warnings by diagnostic code
   -O, --compilerOptions [opts]    JSON object to merge with compiler options
 
@@ -330,10 +322,8 @@ function phase3(payload: BootstrapState) {
     files,
     pretty,
     transpileOnly,
-    transpiler,
     noExperimentalReplAwait,
     typeCheck,
-    swc,
     compilerHost,
     ignore,
     preferTsExts,
@@ -367,11 +357,9 @@ function phase3(payload: BootstrapState) {
     emit,
     files,
     pretty,
-    transpileOnly: transpileOnly ?? transpiler != null ? true : undefined,
+    transpileOnly: transpileOnly ?? undefined,
     experimentalReplAwait: noExperimentalReplAwait ? false : undefined,
     typeCheck,
-    transpiler,
-    swc,
     compilerHost,
     ignore,
     logError,

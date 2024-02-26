@@ -135,7 +135,6 @@ test.suite('esm', (test) => {
 
   test.suite('moduleTypes', (test) => {
     suite('with vanilla ts transpilation', 'tsconfig.json');
-    suite('with third-party-transpiler', 'tsconfig-swc.json');
     function suite(name: string, tsconfig: string) {
       test.suite(name, (test) => {
         test('supports CJS webpack.config.ts in an otherwise ESM project', async (t) => {

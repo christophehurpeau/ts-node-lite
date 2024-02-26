@@ -222,27 +222,6 @@ test.suite('ts-node', (test) => {
       );
     });
 
-    for (const flavor of [
-      '--transpiler ts-node/transpilers/swc transpile-only-swc',
-      '--transpiler ts-node/transpilers/swc-experimental transpile-only-swc',
-      '--swc transpile-only-swc',
-      'transpile-only-swc-via-tsconfig',
-      'transpile-only-swc-shorthand-via-tsconfig',
-    ]) {
-      test(`should support swc and third-party transpilers: ${flavor}`, async () => {
-        const r = await exec(`${CMD_TS_NODE_WITHOUT_PROJECT_FLAG} ${flavor}`, {
-          env: {
-            ...process.env,
-            NODE_OPTIONS: `${process.env.NODE_OPTIONS || ''} --require ${require.resolve(
-              '../../tests/spy-swc-transpiler'
-            )}`,
-          },
-        });
-        expect(r.err).toBe(null);
-        expect(r.stdout).toMatch('Hello World! swc transpiler invocation count: 1\n');
-      });
-    }
-
     test.suite('should support `traceResolution` compiler option', (test) => {
       test('prints traces before running code when enabled', async () => {
         const r = await exec(`${BIN_PATH} --compiler-options="{ \\"traceResolution\\": true }" -e "console.log('ok')"`);
@@ -257,14 +236,6 @@ test.suite('ts-node', (test) => {
         expect(r.stdout).not.toContain('======== Resolving module');
         expect(r.stdout.endsWith('ok\n')).toBe(true);
       });
-    });
-
-    test('swc transpiler supports native ESM emit', async () => {
-      const r = await exec(`${CMD_ESM_LOADER_WITHOUT_PROJECT} ./index.ts`, {
-        cwd: resolve(TEST_DIR, 'transpile-only-swc-native-esm'),
-      });
-      expect(r.err).toBe(null);
-      expect(r.stdout).toMatch('Hello file://');
     });
 
     test('should pipe into `ts-node` and evaluate', async () => {

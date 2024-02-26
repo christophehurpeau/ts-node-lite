@@ -7,7 +7,6 @@ import type * as _sourceMapSupport from '@cspotcode/source-map-support';
 import { BaseError } from 'make-error';
 import type * as _ts from 'typescript';
 
-import type { Transpiler, TranspilerFactory } from './transpilers/types';
 import {
   cachedLookup,
   createProjectLocalResolveHelper,
@@ -36,14 +35,6 @@ import { assertScriptCanLoadAsCJS } from '../dist-raw/node-internal-modules-cjs-
 
 export { TSCommon };
 export { createRepl, CreateReplOptions, ReplService, EvalAwarePartialHost } from './repl';
-export type {
-  TranspilerModule,
-  TranspilerFactory,
-  CreateTranspilerOptions,
-  TranspileOutput,
-  TranspileOptions,
-  Transpiler,
-} from './transpilers/types';
 export type { NodeLoaderHooksAPI1, NodeLoaderHooksAPI2, NodeLoaderHooksFormat } from './esm';
 
 const engineSupportsPackageTypeField = true;
@@ -206,18 +197,6 @@ export interface CreateOptions {
    */
   compiler?: string;
   /**
-   * Specify a custom transpiler for use with transpileOnly
-   */
-  transpiler?: string | [string, object];
-  /**
-   * Transpile with swc instead of the TypeScript compiler, and skip typechecking.
-   *
-   * Equivalent to setting both `transpileOnly: true` and `transpiler: 'ts-node/transpilers/swc'`
-   *
-   * For complete instructions: https://typestrong.org/ts-node/docs/transpilers
-   */
-  swc?: boolean;
-  /**
    * Paths which should not be compiled.
    *
    * Each string in the array is converted to a regular expression via `new RegExp()` and tested against source paths prior to compilation.
@@ -352,9 +331,7 @@ export type ModuleTypeOverride = 'cjs' | 'esm' | 'package';
 /** @internal */
 export interface OptionBasePaths {
   moduleTypes?: string;
-  transpiler?: string;
   compiler?: string;
-  swc?: string;
 }
 
 /**
@@ -587,31 +564,10 @@ export function createFromPreloadedConfig(foundConfigResult: ReturnType<typeof f
 
   const shouldReplAwait = options.experimentalReplAwait !== false && targetSupportsTla;
 
-  // swc implies two other options
-  // typeCheck option was implemented specifically to allow overriding tsconfig transpileOnly from the command-line
-  // So we should allow using typeCheck to override swc
-  if (options.swc && !options.typeCheck) {
-    if (options.transpileOnly === false) {
-      throw new Error("Cannot enable 'swc' option with 'transpileOnly: false'.  'swc' implies 'transpileOnly'.");
-    }
-    if (options.transpiler) {
-      throw new Error("Cannot specify both 'swc' and 'transpiler' options.  'swc' uses the built-in swc transpiler.");
-    }
-  }
-
   const readFile = options.readFile || ts.sys.readFile;
   const fileExists = options.fileExists || ts.sys.fileExists;
   // typeCheck can override transpileOnly, useful for CLI flag to override config file
-  const transpileOnly = (options.transpileOnly === true || options.swc === true) && options.typeCheck !== true;
-  let transpiler: RegisterOptions['transpiler'] | undefined = undefined;
-  let transpilerBasePath: string | undefined = undefined;
-  if (options.transpiler) {
-    transpiler = options.transpiler;
-    transpilerBasePath = optionBasePaths.transpiler;
-  } else if (options.swc) {
-    transpiler = require.resolve('./transpilers/swc.js');
-    transpilerBasePath = optionBasePaths.swc;
-  }
+  const transpileOnly = options.transpileOnly === true && options.typeCheck !== true;
   const transformers = options.transformers || undefined;
   const diagnosticFilters: Array<DiagnosticFilter> = [
     {
@@ -657,36 +613,6 @@ export function createFromPreloadedConfig(foundConfigResult: ReturnType<typeof f
 
   if (options.transpileOnly && typeof transformers === 'function') {
     throw new TypeError('Transformers function is unavailable in "--transpile-only"');
-  }
-  let createTranspiler = initializeTranspilerFactory();
-  function initializeTranspilerFactory() {
-    if (transpiler) {
-      if (!transpileOnly) throw new Error('Custom transpiler can only be used when transpileOnly is enabled.');
-      const transpilerName = typeof transpiler === 'string' ? transpiler : transpiler[0];
-      const transpilerOptions = typeof transpiler === 'string' ? {} : transpiler[1] ?? {};
-      const transpilerConfigLocalResolveHelper = transpilerBasePath
-        ? createProjectLocalResolveHelper(transpilerBasePath)
-        : projectLocalResolveHelper;
-      const transpilerPath = transpilerConfigLocalResolveHelper(transpilerName, true);
-      const transpilerFactory = require(transpilerPath).create as TranspilerFactory;
-      return createTranspiler;
-
-      function createTranspiler(compilerOptions: TSCommon.CompilerOptions, nodeModuleEmitKind?: NodeModuleEmitKind) {
-        return transpilerFactory?.({
-          service: {
-            options,
-            config: {
-              ...config,
-              options: compilerOptions,
-            },
-            projectLocalResolveHelper,
-          },
-          transpilerConfigLocalResolveHelper,
-          nodeModuleEmitKind,
-          ...transpilerOptions,
-        });
-      }
-    }
   }
 
   // Install source map support and read from memory cache.
@@ -1124,7 +1050,6 @@ export function createFromPreloadedConfig(foundConfigResult: ReturnType<typeof f
   ): GetOutputFunction {
     const compilerOptions = { ...config.options };
     if (overrideModuleType !== undefined) compilerOptions.module = overrideModuleType;
-    let customTranspiler = createTranspiler?.(compilerOptions, nodeModuleEmitKind);
     let tsTranspileModule = versionGteLt(ts.version, '4.7.0')
       ? createTsTranspileModule(ts, {
           compilerOptions,
@@ -1134,11 +1059,7 @@ export function createFromPreloadedConfig(foundConfigResult: ReturnType<typeof f
       : undefined;
     return (code: string, fileName: string): SourceOutput => {
       let result: _ts.TranspileOutput;
-      if (customTranspiler) {
-        result = customTranspiler.transpile(code, {
-          fileName,
-        });
-      } else if (tsTranspileModule) {
+      if (tsTranspileModule) {
         result = tsTranspileModule(
           code,
           {

@@ -44,14 +44,6 @@ test('should run REPL when --interactive passed and stdin is not a TTY', async (
   expect(r.stdout).toBe('> 123\n' + 'undefined\n' + '> ');
 });
 
-test('should echo a value when using the swc transpiler', async () => {
-  const p = exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} --interactive  --transpiler ts-node/transpilers/swc-experimental`);
-  p.child.stdin!.end('400\n401\n');
-  const r = await p;
-  expect(r.err).toBe(null);
-  expect(r.stdout).toBe('> 400\n> 401\n> ');
-});
-
 test('REPL has command to get type information', async () => {
   const p = exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} --interactive`);
   p.child.stdin!.end('\nconst a = 123\n.type a');
@@ -450,28 +442,6 @@ test.suite('REPL declares types for node built-ins within REPL', (test) => {
     expect(r.stderr).not.toMatch("Cannot find namespace 'stream'");
     expect(r.stderr).not.toMatch("Cannot find name 'stream'");
     expect(r.stdout).toMatch(`done`);
-  });
-
-  test('disabled in transpile-only mode, to avoid breaking third-party SWC transpiler which rejects `declare import` syntax', async (t) => {
-    const r = await t.context.executeInRepl(
-      `type Duplex = stream.Duplex
-      const s = stream
-      'done'`,
-      {
-        createServiceOpts: {
-          swc: true,
-        },
-        registerHooks: true,
-        waitPattern: `'done'\n> `,
-        startInternalOptions: {
-          useGlobal: false,
-        },
-      }
-    );
-
-    // Assert that we do not get errors about `declare import` syntax from swc
-    expect(r.stdout).toBe("> undefined\n> undefined\n> 'done'\n> ");
-    expect(r.stderr).toBe('');
   });
 });
 

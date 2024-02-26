@@ -18,7 +18,6 @@ tools and libraries.
 * REPL
 * Write standalone scripts
 * Native ESM loader
-* Use third-party transpilers
 * Use custom transformers
 * Integrate with test runners, debuggers, and CLI tools
 * Compatible with pre-compilation for production

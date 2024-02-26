@@ -66,9 +66,6 @@ The latest documentation can also be found on our website: <https://typestrong.o
     *   [Transpilation Options](#transpilation-options)
         *   [ignore](#ignore)
         *   [skipIgnore](#skipignore)
-        *   [compiler](#compiler)
-        *   [swc](#swc)
-        *   [transpiler](#transpiler)
         *   [preferTsExts](#prefertsexts)
     *   [Diagnostic Options](#diagnostic-options)
         *   [logError](#logerror)
@@ -86,7 +83,6 @@ The latest documentation can also be found on our website: <https://typestrong.o
         *   [experimentalResolver](#experimentalresolver)
         *   [experimentalSpecifierResolution](#experimentalspecifierresolution)
     *   [API Options](#api-options)
-*   [SWC](#swc-1)
 *   [CommonJS vs native ECMAScript modules](#commonjs-vs-native-ecmascript-modules)
     *   [CommonJS](#commonjs)
     *   [Native ECMAScript modules](#native-ecmascript-modules)
@@ -114,10 +110,6 @@ The latest documentation can also be found on our website: <https://typestrong.o
     *   [paths and baseUrl
         ](#paths-and-baseurl)
         *   [Why is this not built-in to ts-node?](#why-is-this-not-built-in-to-ts-node)
-    *   [Third-party compilers](#third-party-compilers)
-    *   [Transpilers](#transpilers)
-        *   [Third-party plugins](#third-party-plugins)
-        *   [Write your own plugin](#write-your-own-plugin)
     *   [Module type overrides](#module-type-overrides)
         *   [Caveats](#caveats)
     *   [API](#api)
@@ -153,7 +145,6 @@ tools and libraries.
 *   REPL
 *   Write standalone scripts
 *   Native ESM loader
-*   Use third-party transpilers
 *   Use custom transformers
 *   Integrate with test runners, debuggers, and CLI tools
 *   Compatible with pre-compilation for production
@@ -577,24 +568,6 @@ Specify a custom TypeScript compiler
 *Default:* `typescript` <br/>
 *Environment:* `TS_NODE_COMPILER`
 
-### swc
-
-```shell
-ts-node --swc
-```
-
-Transpile with [swc](#swc).  Implies `--transpileOnly`
-
-*Default:* `false`
-
-### transpiler
-
-```shell
-ts-node --transpiler <name>
-# Example
-ts-node --transpiler ts-node/transpilers/swc
-```
-
 Use a third-party, non-typechecking transpiler
 
 ### preferTsExts
@@ -759,30 +732,6 @@ Requires [`esm`](#esm) to be enabled.
 ## API Options
 
 The API includes [additional options](https://typestrong.org/ts-node/api/interfaces/RegisterOptions.html) not shown here.
-
-# SWC
-
-SWC support is built-in via the `--swc` flag or `"swc": true` tsconfig option.
-
-[SWC](https://swc.rs) is a TypeScript-compatible transpiler implemented in Rust.  This makes it an order of magnitude faster than vanilla `transpileOnly`.
-
-To use it, first install `@swc/core` or `@swc/wasm`.  If using `importHelpers`, also install `@swc/helpers`.  If `target` is less than "es2015" and using `async`/`await` or generator functions, also install `regenerator-runtime`.
-
-```shell
-npm i -D @swc/core @swc/helpers regenerator-runtime
-```
-
-Then add the following to your `tsconfig.json`.
-
-```jsonc title="tsconfig.json"
-{
-  "ts-node": {
-    "swc": true
-  }
-}
-```
-
-> SWC uses `@swc/helpers` instead of `tslib`.  If you have enabled `importHelpers`, you must also install `@swc/helpers`.
 
 # CommonJS vs native ECMAScript modules
 
@@ -1067,9 +1016,7 @@ It is often better to typecheck as part of your tests or linting.  You can run `
 
 To skip typechecking in ts-node, do one of the following:
 
-*   Enable [swc](#swc)
-    *   This is by far the fastest option
-*   Enable [`transpileOnly`](#transpileonly) to skip typechecking without swc
+*   Enable [`transpileOnly`](#transpileonly) to skip typechecking
 
 ## With typechecking
 
@@ -1183,48 +1130,6 @@ For example, to use `ttypescript` and `ts-transformer-keys`, add this to your `t
   }
 }
 ```
-
-## Transpilers
-
-ts-node supports third-party transpilers as plugins.  Transpilers such as swc can transform TypeScript into JavaScript
-much faster than the TypeScript compiler.  You will still benefit from ts-node's automatic `tsconfig.json` discovery,
-sourcemap support, and global ts-node CLI. Plugins automatically derive an appropriate configuration from your existing
-`tsconfig.json` which simplifies project boilerplate.
-
-> **What is the difference between a compiler and a transpiler?**
->
-> For our purposes, a compiler implements TypeScript's API and can perform typechecking.
-> A third-party transpiler does not.  Both transform TypeScript into JavaScript.
-
-### Third-party plugins
-
-The `transpiler` option allows using third-party transpiler plugins with ts-node.  `transpiler` must be given the
-name of a module which can be `require()`d.  The built-in `swc` plugin is exposed as `ts-node/transpilers/swc`.
-
-For example, to use a hypothetical "@cspotcode/fast-ts-compiler", first install it into your project: `npm install @cspotcode/fast-ts-compiler`
-
-Then add the following to your tsconfig:
-
-```jsonc title="tsconfig.json"
-{
-  "ts-node": {
-    "transpileOnly": true,
-    "transpiler": "@cspotcode/fast-ts-compiler"
-  }
-}
-```
-
-### Write your own plugin
-
-To write your own transpiler plugin, check our [API docs](https://typestrong.org/ts-node/api/interfaces/TranspilerModule.html).
-
-Plugins are `require()`d by ts-node, so they can be a local script or a node module published to npm.  The module must
-export a `create` function described by our
-[`TranspilerModule`](https://typestrong.org/ts-node/api/interfaces/TranspilerModule.html) interface.  `create` is
-invoked by ts-node at startup to create one or more transpiler instances.  The instances are used to transform
-TypeScript into JavaScript.
-
-For a working example, check out out our bundled swc plugin: https://github.com/christophehurpeau/ts-node-lite/blob/main/src/transpilers/swc.ts
 
 ## Module type overrides
 

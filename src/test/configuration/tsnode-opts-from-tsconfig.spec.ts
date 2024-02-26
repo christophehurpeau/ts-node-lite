@@ -135,9 +135,6 @@ test.suite('should read ts-node options from tsconfig.json', (test) => {
         [key]: 'cjs',
       });
 
-      // From c, overrides declaration in b
-      expect(config['ts-node'].transpiler).toBe('transpiler-from-c');
-
       // From d, inherited by c, overrides value from b
       expect(config['ts-node'].ignore).toStrictEqual(['ignore-pattern-from-d']);
     });

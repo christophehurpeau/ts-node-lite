@@ -7,6 +7,7 @@
 /// <reference types="node" />
 
 import { BaseError } from 'make-error';
+import { Context } from 'vm';
 import type * as _ts from 'typescript';
 
 // @public
@@ -49,11 +50,9 @@ export interface CreateOptions {
     scopeDir?: string;
     skipIgnore?: boolean;
     skipProject?: boolean;
-    swc?: boolean;
     // (undocumented)
     transformers?: _ts.CustomTransformers | ((p: _ts.Program) => _ts.CustomTransformers);
     transpileOnly?: boolean;
-    transpiler?: string | [string, object];
     tsTrace?: (str: string) => void;
     typeCheck?: boolean;
 }
@@ -75,12 +74,6 @@ export interface CreateReplOptions {
     stdin?: NodeJS.ReadableStream;
     // (undocumented)
     stdout?: NodeJS.WritableStream;
-}
-
-// @public
-export interface CreateTranspilerOptions {
-    // (undocumented)
-    service: Pick<Service, Extract<'config' | 'options' | 'projectLocalResolveHelper', keyof Service>>;
 }
 
 // @public
@@ -188,7 +181,7 @@ export interface ReplService {
     // (undocumented)
     evalAwarePartialHost: EvalAwarePartialHost;
     evalCode(code: string): any;
-    nodeEval(code: string, context: any, _filename: string, callback: (err: Error | null, result?: any) => any): void;
+    nodeEval(code: string, context: Context, _filename: string, callback: (err: Error | null, result?: any) => any): void;
     setService(service: Service): void;
     start(): void;
     // @deprecated
@@ -213,37 +206,6 @@ export interface Service {
     options: RegisterOptions;
     // (undocumented)
     ts: TSCommon;
-}
-
-// @public
-export interface TranspileOptions {
-    // (undocumented)
-    fileName: string;
-}
-
-// @public
-export interface TranspileOutput {
-    // (undocumented)
-    diagnostics?: _ts.Diagnostic[];
-    // (undocumented)
-    outputText: string;
-    // (undocumented)
-    sourceMapText?: string;
-}
-
-// @public
-export interface Transpiler {
-    // (undocumented)
-    transpile(input: string, options: TranspileOptions): TranspileOutput;
-}
-
-// @public
-export type TranspilerFactory = (options: CreateTranspilerOptions) => Transpiler;
-
-// @public
-export interface TranspilerModule {
-    // (undocumented)
-    create: TranspilerFactory;
 }
 
 // @public

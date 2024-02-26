@@ -22,7 +22,7 @@ test.suite('TypeScript module=NodeNext and Node16', (test) => {
   test.if(tsSupportsStableNodeNextNode16 && nodeSupportsImportingTransformedCjsFromEsm);
 
   for (const allowJs of [true, false]) {
-    for (const typecheckMode of ['typecheck', 'transpileOnly', 'swc'] as const) {
+    for (const typecheckMode of ['typecheck', 'transpileOnly'] as const) {
       for (const packageJsonType of [undefined, 'commonjs', 'module'] as const) {
         for (const tsModuleMode of ['NodeNext', 'Node16'] as const) {
           declareTest(test, {
@@ -59,7 +59,7 @@ function declareTest(test: Test, testParams: TestParams) {
 
 type PackageJsonType = typeof packageJsonTypes[number];
 const packageJsonTypes = [undefined, 'commonjs', 'module'] as const;
-const typecheckModes = ['typecheck', 'transpileOnly', 'swc'] as const;
+const typecheckModes = ['typecheck', 'transpileOnly'] as const;
 const importStyles = ['static import', 'require', 'dynamic import', 'import = require'] as const;
 const importExtension = ['js', 'ts', 'omitted'] as const;
 
@@ -175,7 +175,6 @@ function writeFixturesToFilesystem(name: string, testParams: TestParams) {
     },
     'ts-node': {
       transpileOnly: typecheckMode === 'transpileOnly' || undefined,
-      swc: typecheckMode === 'swc',
       experimentalResolver: true,
     },
   });
@@ -215,9 +214,6 @@ function createImporter(proj: ProjectAPI, testParams: TestParams, importerParams
   if (importStyle === 'import = require' && importerExtension.isJs) return;
   // const = require not allowed in ESM
   if (importStyle === 'require' && importerTreatment.isExecutedAsEsm) return;
-  // swc bug: import = require will not work in ESM, because swc does not emit necessary `__require = createRequire()`
-  if (testParams.typecheckMode === 'swc' && importStyle === 'import = require' && importerTreatment.isExecutedAsEsm)
-    return;
 
   const importer = {
     type: 'string',
