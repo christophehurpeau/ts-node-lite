@@ -4,7 +4,6 @@ import * as util from 'util';
 import { fileURLToPath } from 'url';
 
 import type * as _sourceMapSupport from '@cspotcode/source-map-support';
-import { BaseError } from 'make-error';
 import type * as _ts from 'typescript';
 
 import {
@@ -395,7 +394,7 @@ export const DEFAULTS: RegisterOptions = {
 /**
  * TypeScript diagnostics error.
  */
-export class TSError extends BaseError {
+export class TSError extends Error {
   name = 'TSError';
   diagnosticText!: string;
   diagnostics!: ReadonlyArray<_ts.Diagnostic>;
