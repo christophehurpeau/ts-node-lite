@@ -6,8 +6,6 @@
 
 /// <reference types="node" />
 
-import { BaseError } from 'make-error';
-import { Context } from 'vm';
 import type * as _ts from 'typescript';
 
 // @public
@@ -55,28 +53,6 @@ export interface CreateOptions {
     tsTrace?: (str: string) => void;
     typeCheck?: boolean;
 }
-
-// @public
-export function createRepl(options?: CreateReplOptions): ReplService;
-
-// @public
-export interface CreateReplOptions {
-    // (undocumented)
-    service?: Service;
-    // Warning: (ae-forgotten-export) The symbol "EvalState" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    state?: EvalState;
-    // (undocumented)
-    stderr?: NodeJS.WritableStream;
-    // (undocumented)
-    stdin?: NodeJS.ReadableStream;
-    // (undocumented)
-    stdout?: NodeJS.WritableStream;
-}
-
-// @public
-export type EvalAwarePartialHost = Pick<CreateOptions, 'readFile' | 'fileExists'>;
 
 // @public (undocumented)
 export type ExperimentalSpecifierResolution = 'node' | 'explicit';
@@ -173,20 +149,6 @@ export const REGISTER_INSTANCE: unique symbol;
 // @public
 export interface RegisterOptions extends CreateOptions {
     experimentalResolver?: boolean;
-}
-
-// @public (undocumented)
-export interface ReplService {
-    // (undocumented)
-    evalAwarePartialHost: EvalAwarePartialHost;
-    evalCode(code: string): any;
-    nodeEval(code: string, context: Context, _filename: string, callback: (err: Error | null, result?: any) => any): void;
-    setService(service: Service): void;
-    start(): void;
-    // @deprecated
-    start(code: string): void;
-    // (undocumented)
-    readonly state: EvalState;
 }
 
 // @public
@@ -312,7 +274,7 @@ export interface TsConfigOptions extends Omit<RegisterOptions, 'transformers' | 
 }
 
 // @public
-export class TSError extends BaseError {
+export class TSError extends Error {
     constructor(diagnosticText: string, diagnosticCodes: number[], diagnostics?: ReadonlyArray<_ts.Diagnostic>);
     // (undocumented)
     diagnosticCodes: number[];

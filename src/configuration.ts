@@ -4,12 +4,7 @@ import { CreateOptions, DEFAULTS, OptionBasePaths, RegisterOptions, TSCommon, Ts
 import type { TSInternal } from './ts-compiler-types';
 import { createTsInternals } from './ts-internals';
 import { getDefaultTsconfigJsonForNodeVersion } from './tsconfigs';
-import {
-  assign,
-  attemptRequireWithV8CompileCache,
-  createProjectLocalResolveHelper,
-  getBasePathForProjectLocalDependencyResolution,
-} from './util';
+import { assign, createProjectLocalResolveHelper, getBasePathForProjectLocalDependencyResolution } from './util';
 
 /**
  * TypeScript compiler option values required by `ts-node` which cannot be overridden.
@@ -331,7 +326,7 @@ function resolveCompiler(name: string | undefined, relativeToPath: string) {
 
 /** @internal */
 export function loadCompiler(compiler: string): TSCommon {
-  return attemptRequireWithV8CompileCache(require, compiler);
+  return require(compiler);
 }
 
 /**

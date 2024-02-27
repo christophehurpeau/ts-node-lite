@@ -3786,7 +3786,6 @@ __metadata:
     typedoc: ^0.22.10
     typescript: 4.7.4
     typescript-json-schema: ^0.54.0
-    v8-compile-cache-lib: ^3.0.1
     workaround-broken-npm-prepack-behavior: "https://github.com/cspotcode/workaround-broken-npm-prepack-behavior#1a7adbbb8a527784daf97edad6ba42d6e96611f6"
   peerDependencies:
     "@types/node": "*"

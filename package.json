@@ -139,8 +139,7 @@
   },
   "dependencies": {
     "@cspotcode/source-map-support": "^0.8.0",
-    "arg": "^4.1.0",
-    "v8-compile-cache-lib": "^3.0.1"
+    "arg": "^4.1.0"
   },
   "prettier": {
     "singleQuote": true,
