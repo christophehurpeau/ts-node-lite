@@ -1,5 +1,5 @@
 {
-  "name": "ts-node",
+  "name": "ts-node-lite",
   "version": "11.0.0-beta.1",
   "description": "TypeScript execution environment for node.js, with source map support",
   "main": "dist/index.js",
