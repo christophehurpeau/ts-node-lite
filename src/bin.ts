@@ -6,18 +6,6 @@ import Module = require('module');
 let arg: typeof import('arg');
 import { parse, hasOwnProperty, versionGteLt } from './util';
 import {
-  EVAL_FILENAME,
-  EvalState,
-  createRepl,
-  ReplService,
-  setupContext,
-  STDIN_FILENAME,
-  EvalAwarePartialHost,
-  EVAL_NAME,
-  STDIN_NAME,
-  REPL_FILENAME,
-} from './repl';
-import {
   VERSION,
   TSError,
   register,
@@ -102,9 +90,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     ...arg(
       {
         // Node.js-like options.
-        '--eval': String,
-        '--interactive': Boolean,
-        '--print': Boolean,
         '--require': [String],
 
         // CLI options.
@@ -134,13 +119,9 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
         '--emit': Boolean,
         '--scope': Boolean,
         '--scopeDir': String,
-        '--noExperimentalReplAwait': Boolean,
         '--experimentalSpecifierResolution': String,
 
         // Aliases.
-        '-e': '--eval',
-        '-i': '--interactive',
-        '-p': '--print',
         '-r': '--require',
         '-h': '--help',
         '-s': '--script-mode',
@@ -168,7 +149,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
         '--prefer-ts-exts': '--preferTsExts',
         '--log-error': '--logError',
         '--scope-dir': '--scopeDir',
-        '--no-experimental-repl-await': '--noExperimentalReplAwait',
         '--experimental-specifier-resolution': '--experimentalSpecifierResolution',
       },
       {
@@ -189,9 +169,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     '--version': version = 0,
     '--showConfig': showConfig,
     '--require': argsRequire = [],
-    '--eval': code = undefined,
-    '--print': print = false,
-    '--interactive': interactive = false,
     '--files': files,
     '--compiler': compiler,
     '--compilerOptions': compilerOptions,
@@ -209,7 +186,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     '--emit': emit,
     '--scope': scope = undefined,
     '--scopeDir': scopeDir = undefined,
-    '--noExperimentalReplAwait': noExperimentalReplAwait,
     '--experimentalSpecifierResolution': experimentalSpecifierResolution,
     '--esm': esm,
     _: restArgs,
@@ -226,9 +202,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     version,
     showConfig,
     argsRequire,
-    code,
-    print,
-    interactive,
     files,
     compiler,
     compilerOptions,
@@ -246,7 +219,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     emit,
     scope,
     scopeDir,
-    noExperimentalReplAwait,
     experimentalSpecifierResolution,
     esm,
   };
@@ -257,14 +229,11 @@ function phase2(payload: BootstrapState) {
 
   if (help) {
     console.log(`
-Usage: ts-node [options] [ -e script | script.ts ] [arguments]
+Usage: ts-node [options] [ script.ts ] [arguments]
 
 Options:
 
-  -e, --eval [code]               Evaluate code
-  -p, --print                     Print result of \`--eval\`
   -r, --require [path]            Require a node module before execution
-  -i, --interactive               Opens the REPL even if stdin does not appear to be a terminal
 
   --esm                           Bootstrap with the ESM loader, enabling full ESM support
 
@@ -291,7 +260,6 @@ Options:
   --scopeDir                      Directory for \`--scope\`
   --preferTsExts                  Prefer importing TypeScript files over JavaScript files
   --logError                      Logs TypeScript errors to stderr instead of throwing exceptions
-  --noExperimentalReplAwait       Disable top-level await in REPL.  Equivalent to node's --no-experimental-repl-await
   --experimentalSpecifierResolution [node|explicit]
                                   Equivalent to node's --experimental-specifier-resolution
 `);
@@ -322,7 +290,6 @@ function phase3(payload: BootstrapState) {
     files,
     pretty,
     transpileOnly,
-    noExperimentalReplAwait,
     typeCheck,
     compilerHost,
     ignore,
@@ -358,7 +325,6 @@ function phase3(payload: BootstrapState) {
     files,
     pretty,
     transpileOnly: transpileOnly ?? undefined,
-    experimentalReplAwait: noExperimentalReplAwait ? false : undefined,
     typeCheck,
     compilerHost,
     ignore,
@@ -401,17 +367,11 @@ function phase3(payload: BootstrapState) {
  * details can be found in here: https://github.com/TypeStrong/ts-node/issues/1812.
  */
 function getEntryPointInfo(state: BootstrapState) {
-  const { code, interactive, restArgs } = state.parseArgvResult!;
+  const { restArgs } = state.parseArgvResult!;
   const { cwd } = state.phase2Result!;
   const { isCli } = state;
 
-  // Figure out which we are executing: piped stdin, --eval, REPL, and/or entrypoint
-  // This is complicated because node's behavior is complicated
-  // `node -e code -i ./script.js` ignores -e
-  const executeEval = code != null && !(interactive && restArgs.length);
-  const executeEntrypoint = !executeEval && restArgs.length > 0;
-  const executeRepl = !executeEntrypoint && (interactive || (process.stdin.isTTY && !executeEval));
-  const executeStdin = !executeEval && !executeRepl && !executeEntrypoint;
+  const executeEntrypoint = restArgs.length > 0;
 
   /**
    * Unresolved. May point to a symlink, not realpath. May be missing file extension
@@ -420,79 +380,18 @@ function getEntryPointInfo(state: BootstrapState) {
   const entryPointPath = executeEntrypoint ? (isCli ? resolve(cwd, restArgs[0]) : resolve(restArgs[0])) : undefined;
 
   return {
-    executeEval,
     executeEntrypoint,
-    executeRepl,
-    executeStdin,
     entryPointPath,
   };
 }
 
 function phase4(payload: BootstrapState) {
   const { isInChildProcess, tsNodeScript } = payload;
-  const { version, showConfig, restArgs, code, print, argv } = payload.parseArgvResult;
+  const { version, showConfig, restArgs, argv } = payload.parseArgvResult;
   const { cwd } = payload.phase2Result!;
   const { preloadedConfig } = payload.phase3Result!;
 
-  const { entryPointPath, executeEntrypoint, executeEval, executeRepl, executeStdin } = getEntryPointInfo(payload);
-
-  /**
-   * <repl>, [stdin], and [eval] are all essentially virtual files that do not exist on disc and are backed by a REPL
-   * service to handle eval-ing of code.
-   */
-  interface VirtualFileState {
-    state: EvalState;
-    repl: ReplService;
-    module?: Module;
-  }
-  let evalStuff: VirtualFileState | undefined;
-  let replStuff: VirtualFileState | undefined;
-  let stdinStuff: VirtualFileState | undefined;
-  let evalAwarePartialHost: EvalAwarePartialHost | undefined = undefined;
-  if (executeEval) {
-    const state = new EvalState(join(cwd, EVAL_FILENAME));
-    evalStuff = {
-      state,
-      repl: createRepl({
-        state,
-        composeWithEvalAwarePartialHost: evalAwarePartialHost,
-        ignoreDiagnosticsThatAreAnnoyingInInteractiveRepl: false,
-      }),
-    };
-    ({ evalAwarePartialHost } = evalStuff.repl);
-    // Create a local module instance based on `cwd`.
-    const module = (evalStuff.module = new Module(EVAL_NAME));
-    module.filename = evalStuff.state.path;
-    module.paths = (Module as any)._nodeModulePaths(cwd);
-  }
-  if (executeStdin) {
-    const state = new EvalState(join(cwd, STDIN_FILENAME));
-    stdinStuff = {
-      state,
-      repl: createRepl({
-        state,
-        composeWithEvalAwarePartialHost: evalAwarePartialHost,
-        ignoreDiagnosticsThatAreAnnoyingInInteractiveRepl: false,
-      }),
-    };
-    ({ evalAwarePartialHost } = stdinStuff.repl);
-    // Create a local module instance based on `cwd`.
-    const module = (stdinStuff.module = new Module(STDIN_NAME));
-    module.filename = stdinStuff.state.path;
-    module.paths = (Module as any)._nodeModulePaths(cwd);
-  }
-  if (executeRepl) {
-    // correct path is set later
-    const state = new EvalState('');
-    replStuff = {
-      state,
-      repl: createRepl({
-        state,
-        composeWithEvalAwarePartialHost: evalAwarePartialHost,
-      }),
-    };
-    ({ evalAwarePartialHost } = replStuff.repl);
-  }
+  const { entryPointPath, executeEntrypoint } = getEntryPointInfo(payload);
 
   // Register the TypeScript compiler instance.
   const service = createFromPreloadedConfig({
@@ -501,22 +400,15 @@ function phase4(payload: BootstrapState) {
     ...preloadedConfig,
     options: {
       ...preloadedConfig.options,
-      readFile: evalAwarePartialHost?.readFile ?? undefined,
-      fileExists: evalAwarePartialHost?.fileExists ?? undefined,
+      readFile: undefined,
+      fileExists: undefined,
       tsTrace: DEFAULTS.tsTrace,
     },
   });
   register(service);
 
-  if (replStuff) replStuff.state.path = join(cwd, REPL_FILENAME(service.ts.version));
-
   if (isInChildProcess)
     (require('./child/child-loader') as typeof import('./child/child-loader')).lateBindHooks(createEsmHooks(service));
-
-  // Bind REPL service to ts-node compiler service (chicken-and-egg problem)
-  replStuff?.repl.setService(service);
-  evalStuff?.repl.setService(service);
-  stdinStuff?.repl.setService(service);
 
   // Output project information.
   if (version === 2) {
@@ -588,31 +480,6 @@ function phase4(payload: BootstrapState) {
       Module.runMain();
     }
   } else {
-    // Note: eval and repl may both run, but never with stdin.
-    // If stdin runs, eval and repl will not.
-    if (executeEval) {
-      addBuiltinLibsToObject(global);
-      evalAndExitOnTsError(evalStuff!.repl, evalStuff!.module!, code!, print, 'eval');
-    }
-
-    if (executeRepl) {
-      replStuff!.repl.start();
-    }
-
-    if (executeStdin) {
-      let buffer = code || '';
-      process.stdin.on('data', (chunk: Buffer) => (buffer += chunk));
-      process.stdin.on('end', () => {
-        evalAndExitOnTsError(
-          stdinStuff!.repl,
-          stdinStuff!.module!,
-          buffer,
-          // `echo 123 | node -p` still prints 123
-          print,
-          'stdin'
-        );
-      });
-    }
   }
 }
 
@@ -677,35 +544,6 @@ function requireResolveNonCached(absoluteModuleSpecifier: string) {
       ...(req.resolve.paths(relativeModuleSpecifier) || []),
     ],
   });
-}
-
-/**
- * Evaluate an [eval] or [stdin] script
- */
-function evalAndExitOnTsError(
-  replService: ReplService,
-  module: Module,
-  code: string,
-  isPrinted: boolean,
-  filenameAndDirname: 'eval' | 'stdin'
-) {
-  let result: any;
-  setupContext(global, module, filenameAndDirname);
-
-  try {
-    result = replService.evalCode(code);
-  } catch (error) {
-    if (error instanceof TSError) {
-      console.error(error);
-      process.exit(1);
-    }
-
-    throw error;
-  }
-
-  if (isPrinted) {
-    console.log(typeof result === 'string' ? result : inspect(result, { colors: process.stdout.isTTY }));
-  }
 }
 
 if (require.main === module) {

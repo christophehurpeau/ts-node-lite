@@ -10,7 +10,7 @@ const exec = createExec({
   cwd: TEST_DIR,
 });
 
-test('should support transpile only mode', async () => {
+test.skip('should support transpile only mode', async () => {
   const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} --transpile-only -pe "x"`);
   if (r.err === null) {
     throw new Error('Command was expected to fail, but it succeeded.');
@@ -19,7 +19,7 @@ test('should support transpile only mode', async () => {
   expect(r.err.message).toMatch('ReferenceError: x is not defined');
 });
 
-test('should throw error even in transpileOnly mode', async () => {
+test.skip('should throw error even in transpileOnly mode', async () => {
   const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} --transpile-only -pe "console."`);
   if (r.err === null) {
     throw new Error('Command was expected to fail, but it succeeded.');

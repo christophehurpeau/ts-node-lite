@@ -34,7 +34,6 @@ import { createTsTranspileModule } from './ts-transpile-module';
 import { assertScriptCanLoadAsCJS } from '../dist-raw/node-internal-modules-cjs-loader';
 
 export { TSCommon };
-export { createRepl, CreateReplOptions, ReplService, EvalAwarePartialHost } from './repl';
 export type { NodeLoaderHooksAPI1, NodeLoaderHooksAPI2, NodeLoaderHooksFormat } from './esm';
 
 const engineSupportsPackageTypeField = true;
@@ -85,7 +84,6 @@ export interface ProcessEnv {
   TS_NODE_COMPILER_HOST?: string;
   TS_NODE_LOG_ERROR?: string;
   TS_NODE_HISTORY?: string;
-  TS_NODE_EXPERIMENTAL_REPL_AWAIT?: string;
 
   NODE_NO_READLINE?: string;
 }
@@ -252,17 +250,6 @@ export interface CreateOptions {
   fileExists?: (path: string) => boolean;
   transformers?: _ts.CustomTransformers | ((p: _ts.Program) => _ts.CustomTransformers);
   /**
-   * Allows the usage of top level await in REPL.
-   *
-   * Uses node's implementation which accomplishes this with an AST syntax transformation.
-   *
-   * Enabled by default when tsconfig target is es2018 or above. Set to false to disable.
-   *
-   * **Note**: setting to `true` when tsconfig target is too low will throw an Error.  Leave as `undefined`
-   * to get default, automatic behavior.
-   */
-  experimentalReplAwait?: boolean;
-  /**
    * Override certain paths to be compiled and executed as CommonJS or ECMAScript modules.
    * When overridden, the tsconfig "module" and package.json "type" fields are overridden, and
    * the file extension is ignored.
@@ -402,7 +389,6 @@ export const DEFAULTS: RegisterOptions = {
   typeCheck: yn(env.TS_NODE_TYPE_CHECK),
   compilerHost: yn(env.TS_NODE_COMPILER_HOST),
   logError: yn(env.TS_NODE_LOG_ERROR),
-  experimentalReplAwait: yn(env.TS_NODE_EXPERIMENTAL_REPL_AWAIT) ?? undefined,
   tsTrace: console.log.bind(console),
 };
 
@@ -461,8 +447,6 @@ export interface Service {
   configFilePath: string | undefined;
   /** @internal */
   moduleTypeClassifier: ModuleTypeClassifier;
-  /** @internal */
-  readonly shouldReplAwait: boolean;
   /** @internal */
   addDiagnosticFilter(filter: DiagnosticFilter): void;
   /** @internal */
@@ -555,14 +539,6 @@ export function createFromPreloadedConfig(foundConfigResult: ReturnType<typeof f
   const projectLocalResolveHelper = createProjectLocalResolveHelper(projectLocalResolveDir);
 
   const ts = loadCompiler(compiler);
-
-  // Experimental REPL await is not compatible targets lower than ES2018
-  const targetSupportsTla = config.options.target! >= ts.ScriptTarget.ES2018;
-  if (options.experimentalReplAwait === true && !targetSupportsTla) {
-    throw new Error('Experimental REPL await is not compatible with targets lower than ES2018');
-  }
-
-  const shouldReplAwait = options.experimentalReplAwait !== false && targetSupportsTla;
 
   const readFile = options.readFile || ts.sys.readFile;
   const fileExists = options.fileExists || ts.sys.fileExists;
@@ -1194,7 +1170,6 @@ export function createFromPreloadedConfig(foundConfigResult: ReturnType<typeof f
     options,
     configFilePath,
     moduleTypeClassifier,
-    shouldReplAwait,
     addDiagnosticFilter,
     installSourceMapSupport,
     transpileOnly,

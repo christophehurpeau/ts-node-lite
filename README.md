@@ -29,104 +29,106 @@ The latest documentation can also be found on our website: <https://typestrong.o
 
 # Table of Contents
 
-*   [Overview](#overview)
-    *   [Features](#features)
-*   [Installation](#installation)
-*   [Usage](#usage)
-    *   [Command Line](#command-line)
-    *   [Shebang](#shebang)
-    *   [node flags and other tools](#node-flags-and-other-tools)
-    *   [Programmatic](#programmatic)
-*   [Configuration](#configuration)
-    *   [CLI flags](#cli-flags)
-    *   [Via tsconfig.json (recommended)](#via-tsconfigjson-recommended)
-        *   [@tsconfig/bases](#tsconfigbases)
-        *   [Default config](#default-config)
-    *   [`node` flags](#node-flags)
-*   [Options](#options)
-    *   [CLI Options](#cli-options)
-        *   [help](#help)
-        *   [version](#version)
-        *   [eval](#eval)
-        *   [print](#print)
-        *   [interactive](#interactive)
-        *   [esm](#esm)
-    *   [TSConfig Options](#tsconfig-options)
-        *   [project](#project)
-        *   [skipProject](#skipproject)
-        *   [cwdMode](#cwdmode)
-        *   [compilerOptions](#compileroptions)
-        *   [showConfig](#showconfig)
-    *   [Typechecking](#typechecking)
-        *   [transpileOnly](#transpileonly)
-        *   [typeCheck](#typecheck)
-        *   [compilerHost](#compilerhost)
-        *   [files](#files)
-        *   [ignoreDiagnostics](#ignorediagnostics)
-    *   [Transpilation Options](#transpilation-options)
-        *   [ignore](#ignore)
-        *   [skipIgnore](#skipignore)
-        *   [preferTsExts](#prefertsexts)
-    *   [Diagnostic Options](#diagnostic-options)
-        *   [logError](#logerror)
-        *   [pretty](#pretty)
-        *   [TS_NODE_DEBUG](#ts_node_debug)
-    *   [Advanced Options](#advanced-options)
-        *   [require](#require)
-        *   [cwd](#cwd)
-        *   [emit](#emit)
-        *   [scope](#scope)
-        *   [scopeDir](#scopedir)
-        *   [moduleTypes](#moduletypes)
-        *   [TS_NODE_HISTORY](#ts_node_history)
-        *   [noExperimentalReplAwait](#noexperimentalreplawait)
-        *   [experimentalResolver](#experimentalresolver)
-        *   [experimentalSpecifierResolution](#experimentalspecifierresolution)
-    *   [API Options](#api-options)
-*   [CommonJS vs native ECMAScript modules](#commonjs-vs-native-ecmascript-modules)
-    *   [CommonJS](#commonjs)
-    *   [Native ECMAScript modules](#native-ecmascript-modules)
-*   [Troubleshooting](#troubleshooting)
-    *   [Configuration](#configuration-1)
-    *   [Common errors](#common-errors)
-        *   [`TSError`](#tserror)
-        *   [`SyntaxError`](#syntaxerror)
-            *   [Unsupported JavaScript syntax](#unsupported-javascript-syntax)
-        *   [`ERR_REQUIRE_ESM`](#err_require_esm)
-        *   [`ERR_UNKNOWN_FILE_EXTENSION`](#err_unknown_file_extension)
-    *   [Missing Types](#missing-types)
-    *   [npx, yarn dlx, and node_modules](#npx-yarn-dlx-and-node_modules)
-*   [Performance](#performance)
-    *   [Skip typechecking](#skip-typechecking)
-    *   [With typechecking](#with-typechecking)
-*   [Advanced](#advanced)
-    *   [How it works](#how-it-works)
-    *   [Ignored files](#ignored-files)
-        *   [File extensions](#file-extensions)
-        *   [Skipping `node_modules`](#skipping-node_modules)
-        *   [Skipping pre-compiled TypeScript](#skipping-pre-compiled-typescript)
-        *   [Scope by directory](#scope-by-directory)
-        *   [Ignore by regexp](#ignore-by-regexp)
-    *   [paths and baseUrl
-        ](#paths-and-baseurl)
-        *   [Why is this not built-in to ts-node?](#why-is-this-not-built-in-to-ts-node)
-    *   [Module type overrides](#module-type-overrides)
-        *   [Caveats](#caveats)
-    *   [API](#api)
-*   [Recipes](#recipes)
-    *   [Watching and restarting](#watching-and-restarting)
-    *   [AVA](#ava)
-        *   [CommonJS](#commonjs-1)
-        *   [Native ECMAScript modules](#native-ecmascript-modules-1)
-    *   [Gulp](#gulp)
-    *   [IntelliJ and Webstorm](#intellij-and-webstorm)
-    *   [Mocha](#mocha)
-        *   [Mocha 7 and newer](#mocha-7-and-newer)
-        *   [Mocha <=6](#mocha-6)
-    *   [Tape](#tape)
-    *   [Visual Studio Code](#visual-studio-code)
-    *   [Other](#other)
-*   [License](#license)
+- [](#)
+- [Fork](#fork)
+- [ts-node README](#ts-node-readme)
+- [Table of Contents](#table-of-contents)
+- [Overview](#overview)
+  - [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Command Line](#command-line)
+  - [Shebang](#shebang)
+  - [node flags and other tools](#node-flags-and-other-tools)
+  - [Programmatic](#programmatic)
+- [Configuration](#configuration)
+  - [CLI flags](#cli-flags)
+  - [Via tsconfig.json (recommended)](#via-tsconfigjson-recommended)
+    - [@tsconfig/bases](#tsconfigbases)
+    - [Default config](#default-config)
+  - [`node` flags](#node-flags)
+- [Options](#options)
+  - [CLI Options](#cli-options)
+    - [help](#help)
+    - [version](#version)
+    - [esm](#esm)
+  - [TSConfig Options](#tsconfig-options)
+    - [project](#project)
+    - [skipProject](#skipproject)
+    - [cwdMode](#cwdmode)
+    - [compilerOptions](#compileroptions)
+    - [showConfig](#showconfig)
+  - [Typechecking](#typechecking)
+    - [transpileOnly](#transpileonly)
+    - [typeCheck](#typecheck)
+    - [compilerHost](#compilerhost)
+    - [files](#files)
+    - [ignoreDiagnostics](#ignorediagnostics)
+  - [Transpilation Options](#transpilation-options)
+    - [ignore](#ignore)
+    - [skipIgnore](#skipignore)
+    - [compiler](#compiler)
+    - [preferTsExts](#prefertsexts)
+  - [Diagnostic Options](#diagnostic-options)
+    - [logError](#logerror)
+    - [pretty](#pretty)
+    - [TS\_NODE\_DEBUG](#ts_node_debug)
+  - [Advanced Options](#advanced-options)
+    - [require](#require)
+    - [cwd](#cwd)
+    - [emit](#emit)
+    - [scope](#scope)
+    - [scopeDir](#scopedir)
+    - [moduleTypes](#moduletypes)
+    - [TS\_NODE\_HISTORY](#ts_node_history)
+    - [experimentalResolver](#experimentalresolver)
+    - [experimentalSpecifierResolution](#experimentalspecifierresolution)
+  - [API Options](#api-options)
+- [CommonJS vs native ECMAScript modules](#commonjs-vs-native-ecmascript-modules)
+  - [CommonJS](#commonjs)
+  - [Native ECMAScript modules](#native-ecmascript-modules)
+- [Troubleshooting](#troubleshooting)
+  - [Configuration](#configuration-1)
+  - [Common errors](#common-errors)
+    - [`TSError`](#tserror)
+    - [`SyntaxError`](#syntaxerror)
+      - [Unsupported JavaScript syntax](#unsupported-javascript-syntax)
+    - [`ERR_REQUIRE_ESM`](#err_require_esm)
+    - [`ERR_UNKNOWN_FILE_EXTENSION`](#err_unknown_file_extension)
+  - [Missing Types](#missing-types)
+  - [npx, yarn dlx, and node\_modules](#npx-yarn-dlx-and-node_modules)
+- [Performance](#performance)
+  - [Skip typechecking](#skip-typechecking)
+  - [With typechecking](#with-typechecking)
+- [Advanced](#advanced)
+  - [How it works](#how-it-works)
+  - [Ignored files](#ignored-files)
+    - [File extensions](#file-extensions)
+    - [Skipping `node_modules`](#skipping-node_modules)
+    - [Skipping pre-compiled TypeScript](#skipping-pre-compiled-typescript)
+    - [Scope by directory](#scope-by-directory)
+    - [Ignore by regexp](#ignore-by-regexp)
+  - [paths and baseUrl
+](#paths-and-baseurl)
+    - [Why is this not built-in to ts-node?](#why-is-this-not-built-in-to-ts-node)
+  - [Third-party compilers](#third-party-compilers)
+  - [Module type overrides](#module-type-overrides)
+    - [Caveats](#caveats)
+  - [API](#api)
+- [Recipes](#recipes)
+  - [Watching and restarting](#watching-and-restarting)
+  - [AVA](#ava)
+    - [CommonJS](#commonjs-1)
+    - [Native ECMAScript modules](#native-ecmascript-modules-1)
+  - [Gulp](#gulp)
+  - [IntelliJ and Webstorm](#intellij-and-webstorm)
+  - [Mocha](#mocha)
+    - [Mocha 7 and newer](#mocha-7-and-newer)
+    - [Mocha \<=6](#mocha-6)
+  - [Tape](#tape)
+  - [Visual Studio Code](#visual-studio-code)
+  - [Other](#other)
+- [License](#license)
 
 # Overview
 
@@ -175,15 +177,6 @@ npm install -D tslib @types/node
 ```shell
 # Execute a script as `node` + `tsc`.
 ts-node script.ts
-
-# Starts a TypeScript REPL.
-ts-node
-
-# Execute code with TypeScript.
-ts-node -e 'console.log("Hello, world!")'
-
-# Execute, and print, code with TypeScript.
-ts-node -p -e '"Hello, world!"'
 
 # Pipe scripts to execute with TypeScript.
 echo 'console.log("Hello, world!")' | ts-node
@@ -350,7 +343,7 @@ All command-line flags support both `--camelCase` and `--hyphen-case`.
 
 Most options can be declared in your tsconfig.json: [Configuration via tsconfig.json](#via-tsconfigjson-recommended)
 
-`ts-node` supports `--print` (`-p`), `--eval` (`-e`), `--require` (`-r`) and `--interactive` (`-i`) similar to the [node.js CLI](https://nodejs.org/api/cli.html).
+Unlike `ts-node`, `ts-node-like` does not supports `--print` (`-p`), `--eval` (`-e`) and `--interactive` (`-i`). It does supports `--require` (`-r`)
 
 `ts-node` supports `--project` and `--showConfig` similar to the [tsc CLI](https://www.typescriptlang.org/docs/handbook/compiler-options.html#compiler-options).
 
@@ -375,34 +368,6 @@ ts-node -vvv
 
 Prints the version. `-vv` includes node and typescript compiler versions.  `-vvv` includes absolute paths to ts-node and
 typescript installations.
-
-### eval
-
-```shell
-ts-node -e <typescript code>
-# Example
-ts-node -e 'console.log("Hello world!")'
-```
-
-Evaluate code
-
-### print
-
-```shell
-ts-node -p -e <typescript code>
-# Example
-ts-node -p -e '"Hello world!"'
-```
-
-Print result of `--eval`
-
-### interactive
-
-```shell
-ts-node -i
-```
-
-Opens the REPL even if stdin does not appear to be a terminal
 
 ### esm
 
@@ -681,12 +646,6 @@ TS_NODE_HISTORY=<path/to/history/file> ts-node
 Path to history file for REPL
 
 *Default:* `~/.ts_node_repl_history`
-
-### noExperimentalReplAwait
-
-```shell
-ts-node --noExperimentalReplAwait
-```
 
 Disable top-level await in REPL.  Equivalent to node's [`--no-experimental-repl-await`](https://nodejs.org/api/cli.html#cli_no_experimental_repl_await)
 

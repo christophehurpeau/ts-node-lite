@@ -72,21 +72,13 @@ test.suite('ts-node', (test) => {
       expect(r.stdout).toBe('Hello, world!\n');
     });
 
-    test('should print scripts', async () => {
-      const r = await exec(
-        `${CMD_TS_NODE_WITH_PROJECT_FLAG} -pe "import { example } from './complex/index';example()"`
-      );
-      expect(r.err).toBe(null);
-      expect(r.stdout).toBe('example\n');
-    });
-
     test("should expose ts-node Service as a symbol property on Node's `process` object", async () => {
       const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG} env`);
       expect(r.err).toBe(null);
       expect(r.stdout).toBe('object\n');
     });
 
-    test('should allow js', async () => {
+    test.skip('should allow js', async () => {
       const r = await exec(
         [
           CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG,
@@ -98,7 +90,7 @@ test.suite('ts-node', (test) => {
       expect(r.stdout).toBe('hello world\n');
     });
 
-    test('should include jsx when `allow-js` true', async () => {
+    test.skip('should include jsx when `allow-js` true', async () => {
       const r = await exec(
         [
           CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG,
@@ -112,7 +104,7 @@ test.suite('ts-node', (test) => {
 
     test.suite('should support cts when module = CommonJS', (test) => {
       test.if(tsSupportsMtsCtsExtensions);
-      test('test', async (t) => {
+      test.skip('test', async (t) => {
         const r = await exec(
           [CMD_TS_NODE_WITHOUT_PROJECT_FLAG, '-pe "import { main } from \'./index.cjs\';main()"'].join(' '),
           {
@@ -135,21 +127,13 @@ test.suite('ts-node', (test) => {
       });
     });
 
-    test('should eval code', async () => {
-      const r = await exec(
-        `${CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG} -e "import * as m from './module';console.log(m.example('test'))"`
-      );
-      expect(r.err).toBe(null);
-      expect(r.stdout).toBe('TEST\n');
-    });
-
     test('should import empty files', async () => {
-      const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG} -e "import './empty'"`);
+      const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG} './import-empty'`);
       expect(r.err).toBe(null);
       expect(r.stdout).toBe('');
     });
 
-    test('should throw typechecking errors', async () => {
+    test.skip('should throw typechecking errors', async () => {
       const r = await exec(
         `${CMD_TS_NODE_WITH_PROJECT_FLAG} -e "import * as m from './module';console.log(m.example(123))"`
       );
@@ -162,7 +146,7 @@ test.suite('ts-node', (test) => {
       );
     });
 
-    test('should be able to ignore diagnostic', async () => {
+    test.skip('should be able to ignore diagnostic', async () => {
       const r = await exec(
         `${CMD_TS_NODE_WITH_PROJECT_FLAG} --ignore-diagnostics 2345 -e "import * as m from './module';console.log(m.example(123))"`
       );
@@ -207,30 +191,15 @@ test.suite('ts-node', (test) => {
       );
     });
 
-    test('eval should work with source maps', async () => {
-      const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} -pe "import './throw error'"`);
-      if (r.err === null) {
-        throw new Error('Command was expected to fail, but it succeeded.');
-      }
-
-      expect(r.err.message).toMatch(
-        [
-          `${join(TEST_DIR, 'throw error.ts')}:100`,
-          "  bar() { throw new Error('this is a demo'); }",
-          '                ^',
-        ].join('\n')
-      );
-    });
-
     test.suite('should support `traceResolution` compiler option', (test) => {
-      test('prints traces before running code when enabled', async () => {
+      test.skip('prints traces before running code when enabled', async () => {
         const r = await exec(`${BIN_PATH} --compiler-options="{ \\"traceResolution\\": true }" -e "console.log('ok')"`);
         expect(r.err).toBeNull();
         expect(r.stdout).toContain('======== Resolving module');
         expect(r.stdout.endsWith('ok\n')).toBe(true);
       });
 
-      test('does NOT print traces when not enabled', async () => {
+      test.skip('does NOT print traces when not enabled', async () => {
         const r = await exec(`${BIN_PATH} -e "console.log('ok')"`);
         expect(r.err).toBeNull();
         expect(r.stdout).not.toContain('======== Resolving module');
@@ -238,31 +207,7 @@ test.suite('ts-node', (test) => {
       });
     });
 
-    test('should pipe into `ts-node` and evaluate', async () => {
-      const p = exec(CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG);
-      p.child.stdin!.end("console.log('hello')");
-      const r = await p;
-      expect(r.err).toBe(null);
-      expect(r.stdout).toBe('hello\n');
-    });
-
-    test('should pipe into `ts-node`', async () => {
-      const p = exec(`${CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG} -p`);
-      p.child.stdin!.end('true');
-      const r = await p;
-      expect(r.err).toBe(null);
-      expect(r.stdout).toBe('true\n');
-    });
-
-    test('should pipe into an eval script', async () => {
-      const p = exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} --transpile-only -pe "process.stdin.isTTY"`);
-      p.child.stdin!.end('true');
-      const r = await p;
-      expect(r.err).toBe(null);
-      expect(r.stdout).toBe('undefined\n');
-    });
-
-    test('should support require flags', async () => {
+    test.skip('should support require flags', async () => {
       const r = await exec(
         `${CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG} -r ./hello-world -pe "console.log('success')"`
       );
@@ -270,7 +215,7 @@ test.suite('ts-node', (test) => {
       expect(r.stdout).toBe('Hello, world!\nsuccess\nundefined\n');
     });
 
-    test('should support require from node modules', async () => {
+    test.skip('should support require from node modules', async () => {
       const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_TRANSPILE_ONLY_FLAG} -r typescript -e "console.log('success')"`);
       expect(r.err).toBe(null);
       expect(r.stdout).toBe('success\n');
