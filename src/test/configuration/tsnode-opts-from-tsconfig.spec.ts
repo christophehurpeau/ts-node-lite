@@ -37,7 +37,6 @@ test.suite('should read ts-node options from tsconfig.json', (test) => {
     expect(config.options.types).toEqual(['tsconfig-tsnode-types']);
     expect(options.pretty).toBe(undefined);
     expect(options.skipIgnore).toBe(false);
-    expect(options.transpileOnly).toBe(true);
     expect(options.require).toEqual([join(TEST_DIR, './tsconfig-options/required1.js')]);
   });
 
@@ -65,7 +64,6 @@ test.suite('should read ts-node options from tsconfig.json', (test) => {
     expect(config.options.types).toEqual(['flags-types']);
     expect(options.pretty).toBe(undefined);
     expect(options.skipIgnore).toBe(true);
-    expect(options.transpileOnly).toBe(true);
     expect(options.require).toEqual([
       join(TEST_DIR, './tsconfig-options/required1.js'),
       './tsconfig-options/required2.js',
@@ -88,7 +86,6 @@ test.suite('should read ts-node options from tsconfig.json', (test) => {
     expect(config.options.types).toEqual(['tsconfig-tsnode-types']);
     expect(options.pretty).toBe(true);
     expect(options.skipIgnore).toBe(false);
-    expect(options.transpileOnly).toBe(true);
     expect(options.require).toEqual([join(TEST_DIR, './tsconfig-options/required1.js')]);
   });
 

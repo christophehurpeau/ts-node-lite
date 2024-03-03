@@ -19,20 +19,16 @@ export const createEsmHooks: typeof createEsmHooks_2;
 // @public
 export interface CreateOptions {
     compiler?: string;
-    compilerHost?: boolean;
     compilerOptions?: object;
     cwd?: string;
     // @deprecated
     dir?: string;
-    emit?: boolean;
     esm?: boolean;
     experimentalSpecifierResolution?: 'node' | 'explicit';
     experimentalTsImportSpecifiers?: boolean;
     // (undocumented)
     fileExists?: (path: string) => boolean;
-    files?: boolean;
     ignore?: string[];
-    ignoreDiagnostics?: Array<number | string>;
     logError?: boolean;
     moduleTypes?: ModuleTypes;
     preferTsExts?: boolean;
@@ -49,9 +45,7 @@ export interface CreateOptions {
     skipProject?: boolean;
     // (undocumented)
     transformers?: _ts.CustomTransformers | ((p: _ts.Program) => _ts.CustomTransformers);
-    transpileOnly?: boolean;
     tsTrace?: (str: string) => void;
-    typeCheck?: boolean;
 }
 
 // @public (undocumented)

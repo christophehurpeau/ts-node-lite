@@ -59,11 +59,6 @@ The latest documentation can also be found on our website: <https://typestrong.o
     - [compilerOptions](#compileroptions)
     - [showConfig](#showconfig)
   - [Typechecking](#typechecking)
-    - [transpileOnly](#transpileonly)
-    - [typeCheck](#typecheck)
-    - [compilerHost](#compilerhost)
-    - [files](#files)
-    - [ignoreDiagnostics](#ignorediagnostics)
   - [Transpilation Options](#transpilation-options)
     - [ignore](#ignore)
     - [skipIgnore](#skipignore)
@@ -76,7 +71,6 @@ The latest documentation can also be found on our website: <https://typestrong.o
   - [Advanced Options](#advanced-options)
     - [require](#require)
     - [cwd](#cwd)
-    - [emit](#emit)
     - [scope](#scope)
     - [scopeDir](#scopedir)
     - [moduleTypes](#moduletypes)
@@ -97,9 +91,6 @@ The latest documentation can also be found on our website: <https://typestrong.o
     - [`ERR_UNKNOWN_FILE_EXTENSION`](#err_unknown_file_extension)
   - [Missing Types](#missing-types)
   - [npx, yarn dlx, and node\_modules](#npx-yarn-dlx-and-node_modules)
-- [Performance](#performance)
-  - [Skip typechecking](#skip-typechecking)
-  - [With typechecking](#with-typechecking)
 - [Advanced](#advanced)
   - [How it works](#how-it-works)
   - [Ignored files](#ignored-files)
@@ -143,7 +134,6 @@ tools and libraries.
 *   Automatic sourcemaps in stack traces
 *   Automatic `tsconfig.json` parsing
 *   Automatic defaults to match your node version
-*   Typechecking (optional)
 *   REPL
 *   Write standalone scripts
 *   Native ESM loader
@@ -180,9 +170,6 @@ ts-node script.ts
 
 # Pipe scripts to execute with TypeScript.
 echo 'console.log("Hello, world!")' | ts-node
-
-# Equivalent to ts-node --transpileOnly
-ts-node-transpile-only script.ts
 
 # Equivalent to ts-node --cwdMode
 ts-node-cwd script.ts
@@ -280,10 +267,6 @@ You can use this sample configuration as a starting point:
 
   // Most ts-node options can be specified here using their programmatic names.
   "ts-node": {
-    // It is faster to skip typechecking.
-    // Remove if you want ts-node to do typechecking.
-    "transpileOnly": true,
-
     "files": true,
 
     "compilerOptions": {
@@ -435,63 +418,7 @@ Print resolved `tsconfig.json`, including `ts-node` options, and exit
 
 ## Typechecking
 
-### transpileOnly
-
-```shell
-ts-node -T
-ts-node --transpileOnly
-```
-
-Use TypeScript's faster `transpileModule`
-
-*Default:* `false`<br/>
-*Environment:* `TS_NODE_TRANSPILE_ONLY`
-
-### typeCheck
-
-```shell
-ts-node --typeCheck
-```
-
-Opposite of `--transpileOnly`
-
-*Default:* `true`<br/>
-*Environment:* `TS_NODE_TYPE_CHECK`
-
-### compilerHost
-
-```shell
-ts-node -H
-ts-node --compilerHost
-```
-
-Use TypeScript's compiler host API
-
-*Default:* `false` <br/>
-*Environment:* `TS_NODE_COMPILER_HOST`
-
-### files
-
-```shell
-ts-node --files
-```
-
-Load `files`, `include` and `exclude` from `tsconfig.json` on startup.  This may
-avoid certain typechecking failures.  See [Missing types](#missing-types) for details.
-
-*Default:* `false` <br/>
-*Environment:* `TS_NODE_FILES`
-
-### ignoreDiagnostics
-
-```shell
-ts-node -D <code,code>
-ts-node --ignoreDiagnostics <code,code>
-```
-
-Ignore TypeScript warnings by diagnostic code
-
-*Environment:* `TS_NODE_IGNORE_DIAGNOSTICS`
+ts-node-lite does not supports typechecking to improve performance and simplicity. Please use tsc or your IDE instead.
 
 ## Transpilation Options
 
@@ -596,17 +523,6 @@ Behave as if invoked in this working directory
 
 *Default:* `process.cwd()`<br/>
 *Environment:* `TS_NODE_CWD`
-
-### emit
-
-```shell
-ts-node --emit
-```
-
-Emit output files into `.ts-node` directory. Requires `--compilerHost`
-
-*Default:* `false` <br/>
-*Environment:* `TS_NODE_EMIT`
 
 ### scope
 
@@ -962,28 +878,6 @@ The contents of `node_modules` are ignored by default.  If execution fails, enab
 
 <!--See also: [npx and yarn dlx](./recipes/npx-and-yarn-dlx.md)-->
 
-# Performance
-
-These tricks will make ts-node faster.
-
-## Skip typechecking
-
-It is often better to typecheck as part of your tests or linting.  You can run `tsc --noEmit` to do this.  In these cases, ts-node can skip typechecking, making it much faster.
-
-To skip typechecking in ts-node, do one of the following:
-
-*   Enable [`transpileOnly`](#transpileonly) to skip typechecking
-
-## With typechecking
-
-If you absolutely must typecheck in ts-node:
-
-*   Avoid dynamic `require()` which may trigger repeated typechecking; prefer `import`
-*   Try with and without `--files`; one may be faster depending on your project
-*   Check `tsc --showConfig`; make sure all executed files are included
-*   Enable [`skipLibCheck`](https://www.typescriptlang.org/tsconfig#skipLibCheck)
-*   Set a [`types`](https://www.typescriptlang.org/tsconfig#types) array to avoid loading unnecessary `@types`
-
 # Advanced
 
 ## How it works
@@ -1111,7 +1005,6 @@ The following example tells ts-node to execute a webpack config as CommonJS:
 ```jsonc title="tsconfig.json"
 {
   "ts-node": {
-    "transpileOnly": true,
     "moduleTypes": {
       "webpack.config.ts": "cjs",
       // Globs are also supported with the same behavior as tsconfig "include"

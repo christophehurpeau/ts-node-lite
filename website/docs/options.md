@@ -162,30 +162,6 @@ Use TypeScript's compiler host API
 *Default:* `false` <br/>
 *Environment:* `TS_NODE_COMPILER_HOST`
 
-### files
-
-```shell
-ts-node --files
-```
-
-Load `files`, `include` and `exclude` from `tsconfig.json` on startup.  This may
-avoid certain typechecking failures.  See [Missing types](./troubleshooting.md#missing-types) for details.
-
-*Default:* `false` <br/>
-*Environment:* `TS_NODE_FILES`
-
-### ignoreDiagnostics
-
-```shell
-ts-node -D <code,code>
-ts-node --ignoreDiagnostics <code,code>
-```
-
-Ignore TypeScript warnings by diagnostic code
-
-*Environment:* `TS_NODE_IGNORE_DIAGNOSTICS`
-
-
 ## Transpilation Options
 
 ### ignore
@@ -222,26 +198,6 @@ Specify a custom TypeScript compiler
 
 *Default:* `typescript` <br/>
 *Environment:* `TS_NODE_COMPILER`
-
-### swc
-
-```shell
-ts-node --swc
-```
-
-Transpile with [swc](./swc.md).  Implies `--transpileOnly`
-
-*Default:* `false`
-
-### transpiler
-
-```shell
-ts-node --transpiler <name>
-# Example
-ts-node --transpiler ts-node/transpilers/swc
-```
-
-Use a third-party, non-typechecking transpiler
 
 ### preferTsExts
 
@@ -308,17 +264,6 @@ Behave as if invoked in this working directory
 
 *Default:* `process.cwd()`<br/>
 *Environment:* `TS_NODE_CWD`
-
-### emit
-
-```shell
-ts-node --emit
-```
-
-Emit output files into `.ts-node` directory. Requires `--compilerHost`
-
-*Default:* `false` <br/>
-*Environment:* `TS_NODE_EMIT`
 
 ### scope
 

@@ -17,19 +17,4 @@ test.suite('create', ({ contextEach }) => {
     const output = t.context.service.compile('const x = 10', 'test.ts');
     expect(output).toMatch('var x = 10;');
   });
-
-  test.suite('should get type information', (test) => {
-    test('given position of identifier', (t) => {
-      expect(t.context.service.getTypeInfo('/**jsdoc here*/const x = 10', 'test.ts', 21)).toEqual({
-        comment: 'jsdoc here',
-        name: 'const x: 10',
-      });
-    });
-    test('given position that does not point to an identifier', (t) => {
-      expect(t.context.service.getTypeInfo('/**jsdoc here*/const x = 10', 'test.ts', 0)).toEqual({
-        comment: '',
-        name: '',
-      });
-    });
-  });
 });

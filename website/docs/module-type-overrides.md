@@ -24,7 +24,6 @@ The following example tells ts-node to execute a webpack config as CommonJS:
 ```json title="tsconfig.json"
 {
   "ts-node": {
-    "transpileOnly": true,
     "moduleTypes": {
       "webpack.config.ts": "cjs",
       // Globs are also supported with the same behavior as tsconfig "include"

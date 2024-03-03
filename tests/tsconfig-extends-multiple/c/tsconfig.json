@@ -1,8 +1,5 @@
 {
   "extends": "../d/tsconfig.json",
-  "ts-node": {
-    "transpileOnly": true
-  },
   "compilerOptions": {
     "target": "ES2017"
   }

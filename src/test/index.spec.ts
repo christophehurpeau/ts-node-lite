@@ -175,8 +175,8 @@ test.suite('ts-node', (test) => {
       );
     });
 
-    test('should work with source maps in --transpile-only mode', async () => {
-      const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} --transpile-only "throw error"`);
+    test('should work with source maps', async () => {
+      const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} "throw error"`);
       if (r.err === null) {
         throw new Error('Command was expected to fail, but it succeeded.');
       }
@@ -223,19 +223,6 @@ test.suite('ts-node', (test) => {
 
     test('should use source maps with react tsx', async () => {
       const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} "throw error react tsx.tsx"`);
-      expect(r.err).not.toBe(null);
-      expect(r.err!.message).toMatch(
-        [
-          `${join(TEST_DIR, './throw error react tsx.tsx')}:100`,
-          "  bar() { throw new Error('this is a demo'); }",
-          '                ^',
-          'Error: this is a demo',
-        ].join('\n')
-      );
-    });
-
-    test('should use source maps with react tsx in --transpile-only mode', async () => {
-      const r = await exec(`${CMD_TS_NODE_WITH_PROJECT_FLAG} --transpile-only "throw error react tsx.tsx"`);
       expect(r.err).not.toBe(null);
       expect(r.err!.message).toMatch(
         [

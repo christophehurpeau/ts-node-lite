@@ -14,11 +14,8 @@ tools and libraries.
 * Automatic sourcemaps in stack traces
 * Automatic `tsconfig.json` parsing
 * Automatic defaults to match your node version
-* Typechecking (optional)
-* REPL
 * Write standalone scripts
 * Native ESM loader
-* Use custom transformers
 * Integrate with test runners, debuggers, and CLI tools
 * Compatible with pre-compilation for production
 

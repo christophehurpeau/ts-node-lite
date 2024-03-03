@@ -34,12 +34,8 @@ test('should export all CJS entrypoints', () => {
   // Must be `require()`able obviously
   testsDirRequire.resolve('ts-node/register');
   testsDirRequire.resolve('ts-node/register/files');
-  testsDirRequire.resolve('ts-node/register/transpile-only');
-  testsDirRequire.resolve('ts-node/register/type-check');
 
   // `node --loader ts-node/esm`
   testsDirRequire.resolve('ts-node/esm');
   testsDirRequire.resolve('ts-node/esm.mjs');
-  testsDirRequire.resolve('ts-node/esm/transpile-only');
-  testsDirRequire.resolve('ts-node/esm/transpile-only.mjs');
 });

@@ -102,21 +102,15 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
 
         // Project options.
         '--cwd': String,
-        '--files': Boolean,
         '--compiler': String,
         '--compilerOptions': parse,
         '--project': String,
-        '--ignoreDiagnostics': [String],
         '--ignore': [String],
-        '--transpileOnly': Boolean,
-        '--typeCheck': Boolean,
-        '--compilerHost': Boolean,
         '--pretty': Boolean,
         '--skipProject': Boolean,
         '--skipIgnore': Boolean,
         '--preferTsExts': Boolean,
         '--logError': Boolean,
-        '--emit': Boolean,
         '--scope': Boolean,
         '--scopeDir': String,
         '--experimentalSpecifierResolution': String,
@@ -126,12 +120,9 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
         '-h': '--help',
         '-s': '--script-mode',
         '-v': '--version',
-        '-T': '--transpileOnly',
-        '-H': '--compilerHost',
         '-I': '--ignore',
         '-P': '--project',
         '-C': '--compiler',
-        '-D': '--ignoreDiagnostics',
         '-O': '--compilerOptions',
         '--dir': '--cwd',
 
@@ -140,10 +131,6 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
         '--script-mode': '--scriptMode',
         '--show-config': '--showConfig',
         '--compiler-options': '--compilerOptions',
-        '--ignore-diagnostics': '--ignoreDiagnostics',
-        '--transpile-only': '--transpileOnly',
-        '--type-check': '--typeCheck',
-        '--compiler-host': '--compilerHost',
         '--skip-project': '--skipProject',
         '--skip-ignore': '--skipIgnore',
         '--prefer-ts-exts': '--preferTsExts',
@@ -169,21 +156,15 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     '--version': version = 0,
     '--showConfig': showConfig,
     '--require': argsRequire = [],
-    '--files': files,
     '--compiler': compiler,
     '--compilerOptions': compilerOptions,
     '--project': project,
-    '--ignoreDiagnostics': ignoreDiagnostics,
     '--ignore': ignore,
-    '--transpileOnly': transpileOnly,
-    '--typeCheck': typeCheck,
-    '--compilerHost': compilerHost,
     '--pretty': pretty,
     '--skipProject': skipProject,
     '--skipIgnore': skipIgnore,
     '--preferTsExts': preferTsExts,
     '--logError': logError,
-    '--emit': emit,
     '--scope': scope = undefined,
     '--scopeDir': scopeDir = undefined,
     '--experimentalSpecifierResolution': experimentalSpecifierResolution,
@@ -202,21 +183,15 @@ function parseArgv(argv: string[], entrypointArgs: Record<string, any>) {
     version,
     showConfig,
     argsRequire,
-    files,
     compiler,
     compilerOptions,
     project,
-    ignoreDiagnostics,
     ignore,
-    transpileOnly,
-    typeCheck,
-    compilerHost,
     pretty,
     skipProject,
     skipIgnore,
     preferTsExts,
     logError,
-    emit,
     scope,
     scopeDir,
     experimentalSpecifierResolution,
@@ -241,12 +216,9 @@ Options:
   -v, --version                   Print module version information.  -vvv to print additional information
   --showConfig                    Print resolved configuration and exit
 
-  -T, --transpileOnly             Use TypeScript's faster \`transpileModule\`
-  -H, --compilerHost              Use TypeScript's compiler host API
   -I, --ignore [pattern]          Override the path patterns to skip compilation
   -P, --project [path]            Path to TypeScript JSON project file
   -C, --compiler [name]           Specify a custom TypeScript compiler
-  -D, --ignoreDiagnostics [code]  Ignore TypeScript warnings by diagnostic code
   -O, --compilerOptions [opts]    JSON object to merge with compiler options
 
   --cwd                           Behave as if invoked within this working directory.
@@ -255,7 +227,6 @@ Options:
   --cwdMode                       Use current directory instead of <script.ts> for config resolution
   --skipProject                   Skip reading \`tsconfig.json\`
   --skipIgnore                    Skip \`--ignore\` checks
-  --emit                          Emit output files into \`.ts-node\` directory
   --scope                         Scope compiler to files within \`scopeDir\`.  Anything outside this directory is ignored.
   --scopeDir                      Directory for \`--scope\`
   --preferTsExts                  Prefer importing TypeScript files over JavaScript files
@@ -286,12 +257,7 @@ Options:
 
 function phase3(payload: BootstrapState) {
   const {
-    emit,
-    files,
     pretty,
-    transpileOnly,
-    typeCheck,
-    compilerHost,
     ignore,
     preferTsExts,
     logError,
@@ -301,7 +267,6 @@ function phase3(payload: BootstrapState) {
     skipProject,
     skipIgnore,
     compiler,
-    ignoreDiagnostics,
     compilerOptions,
     argsRequire,
     scope,
@@ -321,12 +286,7 @@ function phase3(payload: BootstrapState) {
 
   const preloadedConfig = findAndReadConfig({
     cwd,
-    emit,
-    files,
     pretty,
-    transpileOnly: transpileOnly ?? undefined,
-    typeCheck,
-    compilerHost,
     ignore,
     logError,
     projectSearchDir: getProjectSearchDir(cwd, scriptMode, cwdMode, entryPointPath),
@@ -334,7 +294,6 @@ function phase3(payload: BootstrapState) {
     skipProject,
     skipIgnore,
     compiler,
-    ignoreDiagnostics,
     compilerOptions,
     require: argsRequire,
     scope,

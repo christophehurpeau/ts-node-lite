@@ -22,23 +22,20 @@ test.suite('TypeScript module=NodeNext and Node16', (test) => {
   test.if(tsSupportsStableNodeNextNode16 && nodeSupportsImportingTransformedCjsFromEsm);
 
   for (const allowJs of [true, false]) {
-    for (const typecheckMode of ['typecheck', 'transpileOnly'] as const) {
-      for (const packageJsonType of [undefined, 'commonjs', 'module'] as const) {
-        for (const tsModuleMode of ['NodeNext', 'Node16'] as const) {
-          declareTest(test, {
-            allowJs,
-            packageJsonType,
-            typecheckMode,
-            tsModuleMode,
-          });
-        }
+    for (const packageJsonType of [undefined, 'commonjs', 'module'] as const) {
+      for (const tsModuleMode of ['NodeNext', 'Node16'] as const) {
+        declareTest(test, {
+          allowJs,
+          packageJsonType,
+          tsModuleMode,
+        });
       }
     }
   }
 });
 
 function declareTest(test: Test, testParams: TestParams) {
-  const name = `package-json-type=${testParams.packageJsonType} allowJs=${testParams.allowJs} ${testParams.typecheckMode} tsconfig-module=${testParams.tsModuleMode}`;
+  const name = `package-json-type=${testParams.packageJsonType} allowJs=${testParams.allowJs} tsconfig-module=${testParams.tsModuleMode}`;
 
   test(name, async (t) => {
     const proj = writeFixturesToFilesystem(name, testParams);
@@ -59,7 +56,6 @@ function declareTest(test: Test, testParams: TestParams) {
 
 type PackageJsonType = typeof packageJsonTypes[number];
 const packageJsonTypes = [undefined, 'commonjs', 'module'] as const;
-const typecheckModes = ['typecheck', 'transpileOnly'] as const;
 const importStyles = ['static import', 'require', 'dynamic import', 'import = require'] as const;
 const importExtension = ['js', 'ts', 'omitted'] as const;
 
@@ -143,7 +139,6 @@ function getExtensionTreatment(ext: Extension, testParams: TestParams) {
 
 interface TestParams {
   packageJsonType: PackageJsonType;
-  typecheckMode: typeof typecheckModes[number];
   allowJs: boolean;
   tsModuleMode: 'NodeNext' | 'Node16';
 }
@@ -158,7 +153,7 @@ interface ImporteeParams {
 }
 
 function writeFixturesToFilesystem(name: string, testParams: TestParams) {
-  const { packageJsonType, allowJs, typecheckMode, tsModuleMode } = testParams;
+  const { packageJsonType, allowJs, tsModuleMode } = testParams;
 
   const proj = project(name.replace(/ /g, '_'));
 
@@ -174,7 +169,6 @@ function writeFixturesToFilesystem(name: string, testParams: TestParams) {
       jsx: 'react',
     },
     'ts-node': {
-      transpileOnly: typecheckMode === 'transpileOnly' || undefined,
       experimentalResolver: true,
     },
   });

@@ -8,21 +8,6 @@ title: Usage
 # Execute a script as `node` + `tsc`.
 ts-node script.ts
 
-# Starts a TypeScript REPL.
-ts-node
-
-# Execute code with TypeScript.
-ts-node -e 'console.log("Hello, world!")'
-
-# Execute, and print, code with TypeScript.
-ts-node -p -e '"Hello, world!"'
-
-# Pipe scripts to execute with TypeScript.
-echo 'console.log("Hello, world!")' | ts-node
-
-# Equivalent to ts-node --transpileOnly
-ts-node-transpile-only script.ts
-
 # Equivalent to ts-node --cwdMode
 ts-node-cwd script.ts
 

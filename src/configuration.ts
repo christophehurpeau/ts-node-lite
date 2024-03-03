@@ -246,9 +246,6 @@ export function readConfig(
     assign(tsNodeOptionsFromTsconfig, options);
   }
 
-  // Remove resolution of "files".
-  const files = rawApiOptions.files ?? tsNodeOptionsFromTsconfig.files ?? DEFAULTS.files;
-
   // Only if a config file is *not* loaded, load an implicit configuration from @tsconfig/bases
   const addDefaultCompilerOptions = rootConfigPath == null;
   const defaultCompilerOptionsForNodeVersion = addDefaultCompilerOptions
@@ -290,7 +287,7 @@ export function readConfig(
         readFile,
         // Only used for globbing "files", "include", "exclude"
         // When `files` option disabled, we want to avoid the fs calls
-        readDirectory: files ? ts.sys.readDirectory : () => [],
+        readDirectory: () => [],
         useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
       },
       basePath,
@@ -340,19 +337,13 @@ function filterRecognizedTsConfigTsNodeOptions(jsonObject: any): {
   if (jsonObject == null) return { recognized: {}, unrecognized: {} };
   const {
     compiler,
-    compilerHost,
     compilerOptions,
-    emit,
-    files,
     ignore,
-    ignoreDiagnostics,
     logError,
     preferTsExts,
     pretty,
     require,
     skipIgnore,
-    transpileOnly,
-    typeCheck,
     scope,
     scopeDir,
     moduleTypes,
@@ -364,19 +355,13 @@ function filterRecognizedTsConfigTsNodeOptions(jsonObject: any): {
   } = jsonObject as TsConfigOptions;
   const filteredTsConfigOptions = {
     compiler,
-    compilerHost,
     compilerOptions,
-    emit,
-    files,
     ignore,
-    ignoreDiagnostics,
     logError,
     preferTsExts,
     pretty,
     require,
     skipIgnore,
-    transpileOnly,
-    typeCheck,
     scope,
     scopeDir,
     moduleTypes,

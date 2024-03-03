@@ -20,7 +20,7 @@ const optionsRedundantWithVerbatimModuleSyntax = new Set([
 /** @internal */
 export function createTsTranspileModule(
   ts: TSCommon,
-  transpileOptions: Pick<TranspileOptions, 'compilerOptions' | 'reportDiagnostics' | 'transformers'>
+  transpileOptions: Pick<TranspileOptions, 'compilerOptions' | 'reportDiagnostics'>
 ) {
   const {
     createProgram,
@@ -160,7 +160,7 @@ export function createTsTranspileModule(
       /*writeFile*/ undefined,
       /*cancellationToken*/ undefined,
       /*emitOnlyDtsFiles*/ undefined,
-      transpileOptions.transformers
+      /*customTransformers*/ undefined
     );
 
     if (outputText === undefined) return Debug.fail('Output generation failed');

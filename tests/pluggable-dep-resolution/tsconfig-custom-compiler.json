@@ -1,1 +1,1 @@
-{ "ts-node": { "transpileOnly": true, "compiler": "custom-compiler" } }
+{ "ts-node": { "compiler": "custom-compiler" } }
